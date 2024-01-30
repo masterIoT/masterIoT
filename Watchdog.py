@@ -41,7 +41,7 @@ def check_smtp_status():
         # Établir une connexion au serveur SMTP 
         server = smtplib.SMTP('smtp.gmail.com', 587)
         server.starttls()
-        server.login('ousmaneb2307@gmail.com', 'kewf hvaf zvlm hrkf')
+        server.login('ousmaneb2307@gmail.com', 'MDP A CHANGE')
         server.quit()
         return True
     except smtplib.SMTPConnectError:
@@ -119,7 +119,7 @@ def check_smtp_port():
 def check_smtp_auth():
     try:
         server = smtplib.SMTP('smtp.gmail.com', 587)
-        server.login('ousmaneb2307@gmail.com', 'kewf hvaf zvlm hrkf')
+        server.login('ousmaneb2307@gmail.com', 'MDP A CHANGE')
         server.quit()
         print("SMTP credentials are valid.")
     except smtplib.SMTPAuthenticationError:
@@ -165,7 +165,7 @@ def test_smtp_connection_manuel():
     try:
         server = smtplib.SMTP('smtp.gmail.com', 587)
         server.starttls()
-        server.login('ousmaneb2307@gmail.com', 'kewf hvaf zvlm hrkf')
+        server.login('ousmaneb2307@gmail.com', 'MDP A CHANGE')
         server.quit()
         print("La connexion manuelle à SMTP a fonctioné.")
     except Exception as e:
