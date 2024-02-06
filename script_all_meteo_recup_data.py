@@ -38,6 +38,16 @@ while True:
         options = Options()
         options.add_argument("--headless")
 
+        #pour le téléchargement 
+        # Spécifiez le chemin du répertoire de téléchargement
+        download_dir = "/Users/hugoams/Documents/TER/data"
+
+        # Activer les options de téléchargement automatique
+        options.set_preference("browser.download.folderList", 2)
+        options.set_preference("browser.download.dir", download_dir)
+        options.set_preference("browser.download.manager.showWhenStarting", False)
+        options.set_preference("browser.helperApps.neverAsk.saveToDisk", "application/octet-stream")
+        
         # Creer une instance du navigateur Firefox
         driver = webdriver.Firefox(options=options) 
 
