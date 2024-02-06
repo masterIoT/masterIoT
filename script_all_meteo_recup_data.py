@@ -6,6 +6,8 @@ from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 import time
 from datetime import datetime
+import os
+import shutil
 
 #Necessaires API login
 email = "master.iot.2023@gmail.com"
@@ -30,6 +32,9 @@ tab = [
 #variable pour les time.sleep 
 m = 3
 
+# Chemin du répertoire contenant les fichiers à trier
+repertoire_source = "/home/pgip/Documents/recupData/data"
+
 while True:
     t1 = time.time()
     #si ca marche pas on reessaye deux fois de plus
@@ -38,13 +43,10 @@ while True:
         options = Options()
         options.add_argument("--headless")
 
-        #pour le téléchargement 
-        # Spécifiez le chemin du répertoire de téléchargement
-        download_dir = "/Users/hugoams/Documents/TER/data"
-
+        #Pour le téléchargement 
         # Activer les options de téléchargement automatique
         options.set_preference("browser.download.folderList", 2)
-        options.set_preference("browser.download.dir", download_dir)
+        options.set_preference("browser.download.dir", repertoire_source)
         options.set_preference("browser.download.manager.showWhenStarting", False)
         options.set_preference("browser.helperApps.neverAsk.saveToDisk", "application/octet-stream")
         
@@ -110,6 +112,40 @@ while True:
         finally:
             # Fermer le navigateur
             driver.quit()
+
+    # Parcourir tous les fichiers dans le répertoire source
+    for fichier in os.listdir(repertoire_source):
+        if fichier.endswith(".csv") and fichier.startswith("allmeteo-export-"):
+            # Extraire l'ID du fichier
+            id_fichier = fichier.split("allmeteo-export-")[1].split(".")[0]
+
+            # Créer le chemin du répertoire de destination pour cet ID
+            dossier_destination = os.path.join(repertoire_source, id_fichier)
+
+            # Vérifier si le répertoire de destination existe, sinon le créer
+            if not os.path.exists(dossier_destination):
+                os.makedirs(dossier_destination)
+
+            # Construire le chemin de destination complet
+            chemin_destination_complet = os.path.join(dossier_destination, fichier)
+
+            # Si le fichier de destination existe déjà, renommer le fichier
+            nouveau_nom = fichier
+            index = 1
+            while os.path.exists(chemin_destination_complet):
+                nom_sans_extension, extension = os.path.splitext(fichier)
+                nouveau_nom = f"{nom_sans_extension}_{index}{extension}"
+                chemin_destination_complet = os.path.join(dossier_destination, nouveau_nom)
+                index += 1
+
+            if nouveau_nom != fichier:
+                os.rename(os.path.join(repertoire_source, fichier),os.path.join(repertoire_source, nouveau_nom))
+
+            # Déplacer le fichier vers le répertoire de destination
+            shutil.move(os.path.join(repertoire_source, nouveau_nom), dossier_destination)
+
+    print("Tri des fichiers terminé.")
+
     
     t2 = time.time()
     k = t2 - t1
