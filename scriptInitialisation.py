@@ -110,4 +110,4 @@ print(f"Initialisation terminé, les données ont été téléchargé en {minute
         "Lancement du téléchargement automatique des données toutes les 10min")
 
 #appeler un sub process pour executer script.py
-subprocess.run(['python3', 'script.py'])
+subprocess.run(['python3', 'script_all_meteo_recup_data.py'])
