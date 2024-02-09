@@ -1,0 +1,21 @@
+Ce script automatise la surveillance d'une boîte de réception e-mail pour des messages spécifiques et envoie des réponses prédéfinies en fonction du sujet de l'e-mail. 
+Il utilise les protocoles IMAP pour lire les e-mails et SMTP pour envoyer les réponses.
+
+Fonctionnalités
+
+Surveillance des E-mails : Vérifie régulièrement les nouveaux e-mails non lus dans la boîte de réception spécifiée.
+Filtrage par Expéditeur : Traite uniquement les e-mails provenant d'adresses spécifiées dans la liste authorized_senders.
+Réponses Automatiques : Envoie des réponses basées sur le sujet de l'e-mail reçu, en utilisant un mappage sujet-réponse.
+
+Composantes Principales
+
+Paramètres IMAP/SMTP : Configure les détails de connexion pour les serveurs IMAP et SMTP pour la lecture et l'envoi d'e-mails.
+send_response_email : Fonction qui envoie une réponse à un destinataire spécifié en utilisant les paramètres SMTP.
+check_incoming_emails : Fonction qui vérifie les e-mails entrants, filtre par expéditeur, et détermine si une réponse doit être envoyée.
+main_loop : Boucle principale qui exécute la vérification des e-mails à intervalles réguliers.
+
+Utilisation
+
+Adaptez les valeurs des paramètres IMAP et SMTP pour correspondre à votre configuration de messagerie.
+Modifiez authorized_senders pour inclure les expéditeurs dont vous souhaitez traiter les e-mails.
+Ajustez subject_to_response pour définir les réponses en fonction des sujets d'e-mails reçus.
