@@ -2,19 +2,20 @@ import math
 
 # Définition des données des stations météo avec les noms
 stations = [
-    {"key": "2105SH022", "nom": "SAPHIR MeteoHelix and RainGauge, Phare des Sanguinaires, Ajaccio", "latitude": 41.52436, "longitude": 8.35402},
-    {"key": "2008SH045", "nom": "SAPHIR MeteoHelix, INSPE Garden, Ajacccio", "latitude": 41.54498, "longitude": 8.43409},
-    {"key": "2008SH008", "nom": "SAPHIR MeteoHelix & RainGauge, Coti-Chiavari, FR", "latitude": 41.44243, "longitude": 8.39397},
-    {"key": "2008SH047", "nom": "SAPHIR MeteoHelix & RainGauge, I Costi, Villanova, FR", "latitude": 41.58281, "longitude": 8.39442},
-    {"key": "2008SH025", "nom": "SAPHIR MeteoHelix & RainSensor Corte, FR", "latitude": 42.17561, "longitude": 9.09122},
-    {"key": "2110SH043", "nom": "SAPHIR MeteoHelix & RainSensor Vignola", "latitude": 41.54447, "longitude": 8.39102},
-    {"key": "2204SW013", "nom": "SAPHIR MeteoWind Capu di Muru, Coti-Chiavari, FR", "latitude": 41.44257, "longitude": 8.39418},
-    {"key": "2108SW031", "nom": "SAPHIR MeteoWind Corte Bat.CRIT, FR", "latitude": 42.17556, "longitude": 9.09105},
-    {"key": "2204SW012", "nom": "SAPHIR MeteoWind, I Costi, Villanova, FR", "latitude": 41.58282, "longitude": 8.39445},
-    {"key": "2204SW018", "nom": "SAPHIR MeteoWind, INSPE garden,  Ajaccio", "latitude": 41.54496, "longitude": 8.43413},
-    {"key": "2201SW005", "nom": "SAPHIR MeteoWind, Phare des Sanguinaires, Ajaccio", "latitude": 41.52437, "longitude": 8.35405},
-    {"key": "2108SW030", "nom": "SAPHIR MeteoWind Vignola", "latitude": 41.54464, "longitude": 8.3913}
+    {"key": "2105SH022", "nom": "SAPHIR MeteoHelix and RainGauge, Phare des Sanguinaires, Ajaccio", "latitude": 41.878778, "longitude": 8.594500},
+    {"key": "2008SH045", "nom": "SAPHIR MeteoHelix, INSPE Garden, Ajacccio", "latitude": 41.913833, "longitude": 8.728028},
+    {"key": "2008SH008", "nom": "SAPHIR MeteoHelix & RainGauge, Coti-Chiavari, FR", "latitude": 41.740083, "longitude": 8.661028},
+    {"key": "2008SH047", "nom": "SAPHIR MeteoHelix & RainGauge, I Costi, Villanova, FR", "latitude": 41.974472, "longitude": 8.662278},
+    {"key": "2008SH025", "nom": "SAPHIR MeteoHelix & RainSensor Corte, FR", "latitude": 42.298917, "longitude": 9.153389},
+    {"key": "2110SH043", "nom": "SAPHIR MeteoHelix & RainSensor Vignola", "latitude": 41.912417, "longitude": 8.652833},
+    {"key": "2204SW013", "nom": "SAPHIR MeteoWind Capu di Muru, Coti-Chiavari, FR", "latitude": 41.740472, "longitude": 8.661611},
+    {"key": "2108SW031", "nom": "SAPHIR MeteoWind Corte Bat.CRIT, FR", "latitude": 42.298778, "longitude": 9.152917},
+    {"key": "2204SW012", "nom": "SAPHIR MeteoWind, I Costi, Villanova, FR", "latitude": 41.974500, "longitude": 8.662361},
+    {"key": "2204SW018", "nom": "SAPHIR MeteoWind, INSPE garden,  Ajaccio", "latitude": 41.913778, "longitude": 8.728694},
+    {"key": "2201SW005", "nom": "SAPHIR MeteoWind, Phare des Sanguinaires, Ajaccio", "latitude": 41.878806, "longitude": 8.594583},
+    {"key": "2108SW030", "nom": "SAPHIR MeteoWind Vignola", "latitude": 41.912889, "longitude": 8.653611}
 ]
+
 
 def distance_gps(lat1, lon1, lat2, lon2):
     """
@@ -55,13 +56,14 @@ def station_meteo_proche(latitude, longitude):
 
     return station_proche['key'], station_proche['nom'], min_distance
 
-# Coordonnées du point GPS à partir duquel vous souhaitez trouver la station météo la plus proche
-latitude_point = 41.913033
-longitude_point = 8.654101
+if __name__ == "__main__":
+    # Demander les coordonnées à l'utilisateur
+    latitude_point = float(input("Entrez la latitude du point GPS : "))
+    longitude_point = float(input("Entrez la longitude du point GPS : "))
 
-# Trouver la station météo la plus proche
-key_station_proche, nom_station_proche, min_distance = station_meteo_proche(latitude_point, longitude_point)
+    # Trouver la station météo la plus proche
+    key_station_proche, nom_station_proche, min_distance = station_meteo_proche(latitude_point, longitude_point)
 
-# Imprimer le nom, la clé et la distance de la station météo la plus proche
-print(f"La station météo la plus proche est : {nom_station_proche} ({key_station_proche})")
-print(f"Distance à la station météo la plus proche : {min_distance:.2f} kilomètres")
+    # Imprimer le nom, la clé et la distance de la station météo la plus proche
+    print(f"La station météo la plus proche est : {nom_station_proche} ({key_station_proche})")
+    print(f"Distance à la station météo la plus proche : {min_distance:.2f} kilomètres")
