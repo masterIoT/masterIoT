@@ -12,10 +12,14 @@ model = tf.keras.models.load_model("forecast_model.h5")
 # Configurer Kafka
 KAFKA_BROKER = "kafka:9092"
 OUTPUT_TOPIC = "TPC_IA"
-producer = KafkaProducer(
-    bootstrap_servers=[KAFKA_BROKER],
-    value_serializer=lambda x: json.dumps(x).encode('utf-8')
-)
+producer = None
+try:
+    producer = KafkaProducer(
+        bootstrap_servers=[KAFKA_BROKER],
+        value_serializer=lambda x: json.dumps(x).encode('utf-8')
+    )
+except Exception as e:
+    print(f"Kafka non disponible : {e}")
 
 # Initialiser Flask
 app = Flask(__name__)
@@ -37,20 +41,24 @@ def generate_hourly_timestamps(start, end):
         current += timedelta(hours=1)
     return timestamps
 
-def prepare_input_data(timestamps):
+def prepare_input_data(timestamps, look_back=24):
     """
     Prépare les données d'entrée pour le modèle à partir des timestamps.
     """
-    # Exemple simple pour créer des features à partir des timestamps (adapter selon votre logique réelle)
+    if len(timestamps) < look_back:
+        raise ValueError("Le nombre de timestamps doit être au moins égal à look_back.")
+
     features = []
-    for timestamp in timestamps:
-        dt = datetime.fromisoformat(timestamp)
-        feature = [
-            dt.hour / 24.0,  # Normalisation de l'heure
-            dt.day / 31.0,   # Normalisation du jour
-            dt.month / 12.0  # Normalisation du mois
-        ]
-        features.append(feature)
+    for i in range(len(timestamps) - look_back):
+        sequence = []
+        for j in range(i, i + look_back):
+            dt = datetime.fromisoformat(timestamps[j])
+            sequence.append([
+                dt.hour / 24.0,  # Normalisation de l'heure
+                dt.day / 31.0,   # Normalisation du jour
+                dt.month / 12.0  # Normalisation du mois
+            ])
+        features.append(sequence)
     return np.array(features)
 
 def predict_temperatures(start_date, end_date):
@@ -64,12 +72,9 @@ def predict_temperatures(start_date, end_date):
     input_data = prepare_input_data(timestamps)
 
     # Normaliser les données
-    input_data_scaled = scaler.transform(input_data)
+    input_data_scaled = scaler.transform(input_data.reshape(-1, 3)).reshape(input_data.shape)
 
-    # Ajouter une dimension pour LSTM
-    input_data_scaled = input_data_scaled.reshape((input_data_scaled.shape[0], 1, input_data_scaled.shape[1]))
-
-    # Générer les prédictions
+    # Prédire les températures
     predictions = model.predict(input_data_scaled)
 
     # Dénormaliser les prédictions
@@ -77,8 +82,8 @@ def predict_temperatures(start_date, end_date):
 
     # Structurer les résultats
     results = [
-        {"timestamp": timestamps[i], "temperature": round(predictions_denormalized[i][0], 2)}
-        for i in range(len(timestamps))
+        {"timestamp": timestamps[i + 24], "temperature": round(predictions_denormalized[i][0], 2)}
+        for i in range(len(predictions))
     ]
 
     return results
@@ -95,7 +100,8 @@ def predict():
         predictions = predict_temperatures(start_date, end_date)
 
         # Publier les prédictions sur Kafka
-        producer.send(OUTPUT_TOPIC, value={"predictions": predictions})
+        if producer:
+            producer.send(OUTPUT_TOPIC, value={"predictions": predictions})
 
         return jsonify({"status": "success", "predictions": predictions})
     except Exception as e:
